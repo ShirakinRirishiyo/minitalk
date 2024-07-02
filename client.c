@@ -16,47 +16,50 @@
 #include <stdlib.h>
 #include <string.h>
 
-void    send_char(int pid, unsigned char character) 
+void	send_char(int pid, unsigned char character) 
 {
-    int i;
-    unsigned char temp_char;
+	static int	i;
+	static unsigned char	temp_char;
 
-    for (i = 7; i >= 0; i--) {
-        temp_char = (character >> i) & 1;
-        if (temp_char == 0)
-            kill(pid, SIGUSR2);
-        else
-            kill(pid, SIGUSR1);
-        usleep(1000); // Aumentar el tiempo de espera para asegurar sincronización
-    }
+	i = 7;
+	while(i >= 0)
+	{
+		temp_char = (character >> i) & 1;
+		i++;
+	}
+	if(temp_char == 0)
+		kill(pid, SIGUSR2);
+	else
+		kill(pid, SIGUSR1);
+	uslepp(2000);
 }
 
-int main(int argc, char *argv[]) 
+int	main(int argc, char *argv[])
 {
-    size_t  i;
-    int     pid_server;
-    char    *message;
+	size_t	i;
+	int     pid_server;
+	char    *message;
 
-    i = 0;
-    if (argc != 3) 
-    {
-        printf("Uso: %s <PID_del_servidor> <mensaje>\n", argv[0]);
-        return (1);
-    }
-    pid_server = atoi(argv[1]);
-    message = (char *)malloc(strlen(argv[2]) + 1);
-    if (message == NULL)
-    {
-        printf("Error al asignar memoria\n");
-        return 1;
-    }
-    strcpy(message, argv[2]); 
-    while( i < strlen(message))
-    {
-        send_char(pid_server, message[i]);
-        i++;
-    }
-    send_char(pid_server, '\0');
-    free(message);
-    return 0;
+	i = 0;
+	if (argc != 3)
+	{
+		printf("Uso: %s <PID_del_servidor> <mensaje>\n", argv[0]);
+		return (1);
+	}
+	pid_server = atoi(argv[1]);
+	message = (char *)malloc(strlen(argv[2]) + 1);
+	if (message == NULL)
+	{
+		printf("Error al asignar memoria\n");
+		return (1);
+	}
+	strcpy(message, argv[2]); 
+	while( i < strlen(message))
+	{
+		send_char(pid_server, message[i]);
+		i++;
+	}
+	send_char(pid_server, '\0');
+	free(message);
+	return (0);
 }

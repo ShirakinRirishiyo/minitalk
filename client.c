@@ -15,23 +15,27 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <signal.h>
 
-void	send_char(int pid, unsigned char character) 
+void send_char(int pid, unsigned char character) 
 {
-	static int	i;
-	static unsigned char	temp_char;
+    int i = 7;
 
-	i = 7;
-	while(i >= 0)
-	{
-		temp_char = (character >> i) & 1;
-		i++;
-	}
-	if(temp_char == 0)
-		kill(pid, SIGUSR2);
-	else
-		kill(pid, SIGUSR1);
-	uslepp(2000);
+    while (i >= 0) 
+    {
+        // Extrae el bit más significativo y envía la señal correspondiente
+        if ((character >> i) & 1) 
+        {
+            kill(pid, SIGUSR1); // Envia SIGUSR1 si el bit es 1
+        } 
+        else 
+        {
+            kill(pid, SIGUSR2); // Envia SIGUSR2 si el bit es 0
+        }
+        usleep(200); // Espera para asegurar que el servidor pueda procesar la señal
+        i--;
+    }
 }
 
 int	main(int argc, char *argv[])

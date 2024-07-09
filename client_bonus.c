@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   client_bonus.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dediaz-f <dediaz-f@student.42madrid.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/06 12:57:02 by dediaz-f          #+#    #+#             */
+/*   Updated: 2024/07/06 12:57:02 by dediaz-f         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdio.h>
 #include <signal.h>
 #include <unistd.h>
@@ -14,7 +26,7 @@ void send_char(int pid, unsigned char character)
             kill(pid, SIGUSR1);
         else
             kill(pid, SIGUSR2);
-        usleep(200); // Espera para asegurar que el servidor pueda procesar la señal
+        usleep(250); // Espera para asegurar que el servidor pueda procesar la señal
         i--;
     }
 }
@@ -31,28 +43,21 @@ void handle_signal(int sig)
     }
 }
 
-void manejo(size_t i, int pid_server, char *mensaje)
+void manejo(void)
 {
     struct sigaction sa_s;
-	 // Configurar el manejador para SIGUSR1
     sa_s.sa_handler = handle_signal;
     sa_s.sa_flags = 0;
     sigemptyset(&sa_s.sa_mask); // Limpiar el conjunto de señales bloqueadas
     if (sigaction(SIGUSR1, &sa_s, NULL) == -1)
     {
-        perror("Error al configurar SIGUSR1");
-        return;
+        printf("Error al configurar SIGUSR1\n");
+       exit(1);
     }
     if (sigaction(SIGUSR2, &sa_s, NULL) == -1)
     {
-        perror("Error al configurar SIGUSR2");
-        return;
-    }
-    i = 0;
-    while (i < strlen(mensaje))
-    {
-        send_char(pid_server, mensaje[i]);
-        i++;
+        printf("Error al configurar SIGUSR2\n");
+        exit(1);
     }
 }
 
@@ -60,7 +65,6 @@ int main(int argc, char *argv[])
 {
     size_t i;
     int pid_server;
-    char *mensaje;
 
     i = 0;
     if (argc != 3)
@@ -69,15 +73,13 @@ int main(int argc, char *argv[])
         return (1);
     }
     pid_server = atoi(argv[1]);
-    mensaje = (char *)malloc(strlen(argv[2]) + 1);
-    if (mensaje == NULL)
+    manejo();
+    i = 0;
+    while (i < strlen(argv[2]))
     {
-        printf("Error al asignar memoria\n");
-        return (1);
+        send_char(pid_server, argv[2][i]);
+        i++;
     }
-    strcpy(mensaje, argv[2]);
-    manejo(i, pid_server, mensaje);
     send_char(pid_server, '\0'); // Enviar el caracter nulo para indicar fin del mensaje
-    free(mensaje);
     return (0);
 }

@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 
 #include <stdio.h>
-#include <signal.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -24,46 +22,44 @@ void send_char(int pid, unsigned char character)
 
     while (i >= 0) 
     {
-        // Extrae el bit más significativo y envía la señal correspondiente
         if ((character >> i) & 1) 
         {
-            kill(pid, SIGUSR1); // Envia SIGUSR1 si el bit es 1
+            if (kill(pid, SIGUSR1) == -1) 
+            {
+                printf("Error al enviar SIGUSR1\n");
+                exit(1);
+            }
         } 
         else 
         {
-            kill(pid, SIGUSR2); // Envia SIGUSR2 si el bit es 0
+            if (kill(pid, SIGUSR2) == -1) 
+            {
+                printf("Error al enviar SIGUSR2\n");
+                exit(1);
+            }
         }
-        usleep(200); // Espera para asegurar que el servidor pueda procesar la señal
+        usleep(1000); // Incrementa el tiempo de espera
         i--;
     }
 }
 
-int	main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
-	size_t	i;
-	int     pid_server;
-	char    *message;
+    size_t i;
+    int pid_server;
 
 	i = 0;
-	if (argc != 3)
+    if (argc != 3)
+    {
+        printf("Uso: %s <PID_del_servidor> <mensaje>\n", argv[0]);
+        return (1);
+    }
+    pid_server = atoi(argv[1]);
+	while(i < strlen(argv[2]))
 	{
-		printf("Uso: %s <PID_del_servidor> <mensaje>\n", argv[0]);
-		return (1);
-	}
-	pid_server = atoi(argv[1]);
-	message = (char *)malloc(strlen(argv[2]) + 1);
-	if (message == NULL)
-	{
-		printf("Error al asignar memoria\n");
-		return (1);
-	}
-	strcpy(message, argv[2]); 
-	while( i < strlen(message))
-	{
-		send_char(pid_server, message[i]);
+		send_char(pid_server, argv[2][i]);
 		i++;
 	}
-	send_char(pid_server, '\0');
-	free(message);
-	return (0);
+    send_char(pid_server, '\0');
+    return (0);
 }

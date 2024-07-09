@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dediaz-f <dediaz-f@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/02 15:01:33 by dediaz-f          #+#    #+#             */
-/*   Updated: 2024/07/05 17:06:06 by dediaz-f         ###   ########.fr       */
+/*   Created: 2024/07/06 12:56:50 by dediaz-f          #+#    #+#             */
+/*   Updated: 2024/07/06 12:58:02 by dediaz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,30 +21,30 @@ void handler_signal(int sig, siginfo_t *info, void *context)
     static int bit_position = 0;
 
     (void) context;
-    if(sig == SIGUSR1)
-    {
+    if (sig == SIGUSR1)
         current_char |= (1 << (7 - bit_position));
-    }
-    else if(sig == SIGUSR2)
+    else if (sig == SIGUSR2)
     {
-        // Do nothing, just advance the bit position
+        // No hacer nada, solo avanzar la posición del bit
     }
     bit_position++;
-    if(bit_position == 8)
-    { 
-        printf("%c\n", current_char);
+    if (bit_position == 8)
+    {
+        if (current_char == '\0')
+            printf("\nServidor: Fin del mensaje.\n");
+        else
+            printf("%c", current_char);
         bit_position = 0;
         current_char = 0;
         if (kill(info->si_pid, SIGUSR1) == -1)
-        {
-           printf("Unable to send SIGUSR1\n");
-        }
+            printf("Servidor: No se pudo enviar SIGUSR1\n");
+  
     }
 }
 
 int main(void)
 {
-    struct sigaction    sa_s;
+    struct sigaction sa_s;
 
     printf("Pid del servidor: %d\n", getpid());
     sa_s.sa_sigaction = &handler_signal;

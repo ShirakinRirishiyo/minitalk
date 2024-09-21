@@ -1,41 +1,29 @@
-
-LIBFT = libft/libft.a
-
 CC = gcc
-CCFLAGS = gcc -Wall -Werror -Wextra
+CFLAGS = -Wall -Werror -Wextra -I./libft
+LIBFT = libft/libftprintf.a
 
-SERVER = server
-CLIENT = client
 SRCS_SERVER = server.c
 SRCS_CLIENT = client.c
-SRCS_SERVER_BONUS = server_bonus.c
-SRCS_CLIENT_BONUS = client_bonus.c
-
 OBJS_SERVER = $(SRCS_SERVER:.c=.o)
 OBJS_CLIENT = $(SRCS_CLIENT:.c=.o)
-OBJS_SERVER_BONUS = $(SRCS_SERVER_BONUS:.c=.o)
-OBJS_CLIENT_BONUS = $(SRCS_CLIENT_BONUS:.c=.o)
 
+all: $(OBJS_SERVER) $(OBJS_CLIENT) $(LIBFT)
+	$(CC) $(CFLAGS) -o server $(OBJS_SERVER) $(LIBFT)
+	$(CC) $(CFLAGS) -o client $(OBJS_CLIENT) $(LIBFT)
 
-all: $(SERVER) $(CLIENT)
+$(OBJS_SERVER): $(SRCS_SERVER)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-$(SERVER) $(CLIENT): $(OBJS_SERVER) $(OBJS_CLIENT) $(LIBFT)
-		${CCFLAGS} ${OBJS_SERVER} libft/libft.a -o ${SERVER}
-		${CCFLAGS} ${OBJS_CLIENT} libft/libft.a -o ${CLIENT}
+$(OBJS_CLIENT): $(SRCS_CLIENT)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(LIBFT):
-		${MAKE} -C ./libft
+	make -C libft
 
-bonus: ${OBJS_SERVER_BONUS} ${OBJS_CLIENT_BONUS} ${LIBFT}
-		${CCFLAGS} ${OBJS_SERVER_BONUS} libft/libft.a -o ${SERVER}
-		${CCFLAGS} ${OBJS_CLIENT_BONUS} libft/libft.a -o ${CLIENT}
+clean:
+	rm -rf $(OBJS_SERVER) $(OBJS_CLIENT)
 
-clean:	
-		$(MAKE) clean -C ./libft
-		rm -rf ${OBJS_SERVER} ${OBJS_CLIENT} ${OBJS_SERVER_BONUS} ${OBJS_CLIENT_BONUS}
+fclean: clean
+	rm -f server client
 
-fclean:	clean
-		$(MAKE) fclean -C ./libft
-		rm -rf $(SERVER) $(CLIENT)
-
-re:	fclean all
+re: fclean all

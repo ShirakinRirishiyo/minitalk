@@ -15,6 +15,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <libft.h>
 
 void send_char(int pid, unsigned char character)
 {
@@ -51,12 +52,12 @@ void manejo(void)
     sigemptyset(&sa_s.sa_mask); // Limpiar el conjunto de señales bloqueadas
     if (sigaction(SIGUSR1, &sa_s, NULL) == -1)
     {
-        printf("Error al configurar SIGUSR1\n");
+        ft_printf("Error al configurar SIGUSR1\n");
        exit(1);
     }
     if (sigaction(SIGUSR2, &sa_s, NULL) == -1)
     {
-        printf("Error al configurar SIGUSR2\n");
+        ft_printf("Error al configurar SIGUSR2\n");
         exit(1);
     }
 }
@@ -69,13 +70,13 @@ int main(int argc, char *argv[])
     i = 0;
     if (argc != 3)
     {
-        printf("Uso: %s <PID_del_servidor> <mensaje>\n", argv[0]);
+        ft_printf("Uso: %s <PID_del_servidor> <mensaje>\n", argv[0]);
         return (1);
     }
-    pid_server = atoi(argv[1]);
+    pid_server = ft_atoi(argv[1]);
     manejo();
     i = 0;
-    while (i < strlen(argv[2]))
+    while (i < ft_strlen(argv[2]))
     {
         send_char(pid_server, argv[2][i]);
         i++;

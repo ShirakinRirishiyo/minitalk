@@ -1,66 +1,89 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   client.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: dediaz-f <dediaz-f@student.42madrid.com    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/01 16:39:56 by dediaz-f          #+#    #+#             */
-/*   Updated: 2024/07/01 16:39:56 by dediaz-f         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <signal.h>
 #include <string.h>
-#include <unistd.h>
-
 #include "libft.h"
 
-void send_char(int pid, unsigned char character) 
-{
-    int i = 7;
+volatile sig_atomic_t confirmation_received = 0;
 
-    while (i >= 0) 
+void handle_signal(int sig)
+{
+    if (sig == SIGUSR1)
     {
-        if ((character >> i) & 1) 
+        confirmation_received = 1; // Confirmación recibida
+    }
+}
+
+void setup_signal_handler(void)
+{
+    struct sigaction sa;
+    sa.sa_handler = handle_signal;
+    sa.sa_flags = 0;
+    sigemptyset(&sa.sa_mask);
+
+    if (sigaction(SIGUSR1, &sa, NULL) == -1)
+    {
+        perror("Error al configurar SIGUSR1");
+        exit(1);
+    }
+}
+
+void send_byte(int pid, unsigned char byte)
+{
+    int bit_position;
+    for (int attempt = 0; attempt < 5; attempt++) // Intentar hasta 5 veces
+    {
+        bit_position = 0;
+        confirmation_received = 0; // Reiniciar el estado de confirmación
+
+        while (bit_position < 8)
         {
-            if (kill(pid, SIGUSR1) == -1) 
+            if ((byte >> (7 - bit_position)) & 1)
+                kill(pid, SIGUSR1);
+            else
+                kill(pid, SIGUSR2);
+
+            // Esperar un breve momento antes de verificar la confirmación
+            usleep(500); // Ajusta el tiempo según sea necesario
+
+            if (confirmation_received)
             {
-                printf("Error al enviar SIGUSR1\n");
-                exit(1);
+                break; // Salir si se recibe confirmación
             }
-        } 
-        else 
-        {
-            if (kill(pid, SIGUSR2) == -1) 
-            {
-                printf("Error al enviar SIGUSR2\n");
-                exit(1);
-            }
+            bit_position++;
         }
-        usleep(1000); // Incrementa el tiempo de espera
-        i--;
+
+        if (confirmation_received)
+        {
+            printf("Cliente: Confirmación recibida para el byte '%c'\n", byte);
+            break; // Salir si se recibió confirmación para el byte
+        }
+        else
+        {
+            printf("Cliente: No se recibió confirmación para el byte '%c', reintentando...\n", byte);
+        }
     }
 }
 
 int main(int argc, char *argv[])
 {
-    size_t i;
-    int pid_server;
-
-	i = 0;
     if (argc != 3)
     {
-        ft_printf("Uso: %s <PID_del_servidor> <mensaje>\n", argv[0]);
-        return (1);
+        printf("Uso: %s <PID_del_servidor> <mensaje>\n", argv[0]);
+        return 1;
     }
-    pid_server = ft_atoi(argv[1]);
-	while(i < ft_strlen(argv[2]))
-	{
-		send_char(pid_server, argv[2][i]);
-		i++;
-	}
-    send_char(pid_server, '\0');
-    return (0);
+
+    int pid_server = atoi(argv[1]);
+    setup_signal_handler();
+
+    // Enviar cada byte de la cadena (soporte para UTF-8)
+    for (size_t i = 0; i < strlen(argv[2]); i++)
+    {
+        send_byte(pid_server, (unsigned char)argv[2][i]);
+    }
+
+    send_byte(pid_server, '\0'); // Enviar el carácter nulo para indicar fin del mensaje
+
+    return 0;
 }

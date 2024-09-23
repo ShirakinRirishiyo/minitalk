@@ -80,8 +80,8 @@ char	*get_next_line(int fd)
 	ssize_t			read_result;
 
 	if (BUFFER_SIZE <= 0 || fd < 0)
-	return NULL;
-		result = ft_strdup_gnl("");
+		return (NULL);
+	result = ft_strdup_gnl("");
 	buffer = (char *)malloc((BUFFER_SIZE * sizeof(char)) + 1);
 	if (buffer == NULL)
 		return (NULL);

@@ -1,8 +1,8 @@
-#include <stdio.h>
-#include <signal.h>
 #include <unistd.h>
-#include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <signal.h>
+#include <string.h>
 #include "libft.h"
 
 volatile sig_atomic_t confirmation_received = 0;
@@ -29,7 +29,7 @@ void setup_signal_handler(void)
     }
 }
 
-void send_char(int pid, unsigned char character)
+void send_byte(int pid, unsigned char byte)
 {
     int bit_position;
     for (int attempt = 0; attempt < 5; attempt++) // Intentar hasta 5 veces
@@ -39,13 +39,13 @@ void send_char(int pid, unsigned char character)
 
         while (bit_position < 8)
         {
-            if ((character >> (7 - bit_position)) & 1)
+            if ((byte >> (7 - bit_position)) & 1)
                 kill(pid, SIGUSR1);
             else
                 kill(pid, SIGUSR2);
 
             // Esperar un breve momento antes de verificar la confirmación
-            usleep(300); // Ajusta el tiempo según sea necesario
+            usleep(500); // Ajusta el tiempo según sea necesario
 
             if (confirmation_received)
             {
@@ -56,12 +56,12 @@ void send_char(int pid, unsigned char character)
 
         if (confirmation_received)
         {
-            printf("Cliente: Confirmación recibida para el carácter '%c'\n", character);
-            break; // Salir si se recibió confirmación para el carácter
+            printf("Cliente: Confirmación recibida para el byte '%c'\n", byte);
+            break; // Salir si se recibió confirmación para el byte
         }
         else
         {
-            printf("Cliente: No se recibió confirmación para el carácter '%c', reintentando...\n", character);
+            printf("Cliente: No se recibió confirmación para el byte '%c', reintentando...\n", byte);
         }
     }
 }
@@ -70,19 +70,20 @@ int main(int argc, char *argv[])
 {
     if (argc != 3)
     {
-        ft_printf("Uso: %s <PID_del_servidor> <mensaje>\n", argv[0]);
+        printf("Uso: %s <PID_del_servidor> <mensaje>\n", argv[0]);
         return 1;
     }
 
-    int pid_server = ft_atoi(argv[1]);
+    int pid_server = atoi(argv[1]);
     setup_signal_handler();
 
-    for (size_t i = 0; i < ft_strlen(argv[2]); i++)
+    // Enviar cada byte de la cadena (soporte para UTF-8)
+    for (size_t i = 0; i < strlen(argv[2]); i++)
     {
-        send_char(pid_server, argv[2][i]);
+        send_byte(pid_server, (unsigned char)argv[2][i]);
     }
 
-    send_char(pid_server, '\0'); // Enviar el carácter nulo para indicar fin del mensaje
+    send_byte(pid_server, '\0'); // Enviar el carácter nulo para indicar fin del mensaje
 
     return 0;
 }

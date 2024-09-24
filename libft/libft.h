@@ -28,6 +28,13 @@
 #  define BUFFER_SIZE 1000000
 # endif
 
+typedef struct {
+    unsigned char current_char;  
+    int bit_position; 
+	volatile sig_atomic_t confirmation; 
+} SharedData;
+
+
 char	*get_next_line(int fd);
 size_t	ft_strlen_gnl(const char *s);
 char	*strjoin_and_free(char *s1, const char *s2);

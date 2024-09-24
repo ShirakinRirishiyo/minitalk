@@ -6,15 +6,15 @@
 /*   By: dediaz-f <dediaz-f@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 14:52:49 by dediaz-f          #+#    #+#             */
-/*   Updated: 2024/09/24 14:52:49 by dediaz-f         ###   ########.fr       */
+/*   Updated: 2024/09/24 16:54:40 by dediaz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static	SharedData g_data;
+static SharedData	g_data;
 
-void	handle_signal(int sig) 
+void	handle_signal(int sig)
 {
 	if (sig == SIGUSR1)
 	{
@@ -24,7 +24,7 @@ void	handle_signal(int sig)
 
 void	setup_signal_handler(void)
 {
-	struct	sigaction sa;
+	struct sigaction	sa;
 
 	sa.sa_handler = handle_signal;
 	sa.sa_flags = 0;
@@ -49,10 +49,10 @@ void	send_bit(int pid, unsigned char byte, int bit_position)
 	usleep(200);
 }
 
-void	send_byte(int pid, unsigned char byte) 
+void	send_byte(int pid, unsigned char byte)
 {
-	int attempt;
-	int bit_position;
+	int	attempt;
+	int	bit_position;
 
 	attempt = 0;
 	while (attempt < 5)
@@ -65,12 +65,12 @@ void	send_byte(int pid, unsigned char byte)
 			bit_position++;
 			usleep(100);
 			if (g_data.confirmation)
-				break;
+				break ;
 		}
 		if (g_data.confirmation)
 		{
 			ft_printf("Cliente: Received byte '%c'\n", byte);
-			return;
+			return ;
 		}
 		else
 			ft_printf("Cliente: Fail to confirm byte '%c', retry...\n", byte);
@@ -78,10 +78,9 @@ void	send_byte(int pid, unsigned char byte)
 	}
 }
 
-
-int	main(int argc, char *argv[]) 
+int	main(int argc, char *argv[])
 {
-	size_t			i;
+	size_t	i;
 	int	pid_server;
 
 	i = 0;

@@ -6,7 +6,7 @@
 /*   By: dediaz-f <dediaz-f@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 16:30:40 by dediaz-f          #+#    #+#             */
-/*   Updated: 2024/03/09 16:30:40 by dediaz-f         ###   ########.fr       */
+/*   Updated: 2024/09/24 18:16:03 by dediaz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,12 @@
 #  define BUFFER_SIZE 1000000
 # endif
 
-typedef struct {
-    unsigned char current_char;  
-    int bit_position; 
-	volatile sig_atomic_t confirmation; 
-} SharedData;
-
+typedef struct Share
+{
+	unsigned char	current_char;
+	int	bit_position;
+	volatile sig_atomic_t	confirmation;
+}	t_SharedData;
 
 char	*get_next_line(int fd);
 size_t	ft_strlen_gnl(const char *s);

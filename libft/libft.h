@@ -30,8 +30,8 @@
 
 typedef struct Share
 {
-	unsigned char	current_char;
-	int	bit_position;
+	unsigned char			current_char;
+	int						bit_position;
 	volatile sig_atomic_t	confirmation;
 }	t_SharedData;
 

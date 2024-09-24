@@ -12,7 +12,7 @@
 
 #include "libft.h"
 
-static SharedData	g_data;
+static t_SharedData	g_data;
 
 void	handler_signal(int sig, siginfo_t *info, void *context)
 {

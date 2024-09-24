@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.c                                           :+:      :+:    :+:   */
+/*   server_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dediaz-f <dediaz-f@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 14:57:01 by dediaz-f          #+#    #+#             */
-/*   Updated: 2024/09/24 16:52:43 by dediaz-f         ###   ########.fr       */
+/*   Updated: 2024/09/24 18:39:26 by dediaz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static SharedData	g_data;
+static t_SharedData	g_data;
 
 void	handler_signal(int sig, siginfo_t *info, void *context)
 {

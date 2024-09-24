@@ -12,7 +12,7 @@
 
 #include "libft.h"
 
-static SharedData	g_data;
+static t_SharedData	g_data;
 
 void	handle_signal(int sig)
 {
@@ -81,7 +81,7 @@ void	send_byte(int pid, unsigned char byte)
 int	main(int argc, char *argv[])
 {
 	size_t	i;
-	int	pid_server;
+	int		pid_server;
 
 	i = 0;
 	if (argc != 3)

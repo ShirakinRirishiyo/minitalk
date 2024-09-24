@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client.c                                           :+:      :+:    :+:   */
+/*   client_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dediaz-f <dediaz-f@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 14:52:49 by dediaz-f          #+#    #+#             */
-/*   Updated: 2024/09/24 16:54:40 by dediaz-f         ###   ########.fr       */
+/*   Updated: 2024/09/24 18:39:21 by dediaz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static SharedData	g_data;
+static t_SharedData	g_data;
 
 void	handle_signal(int sig)
 {
@@ -81,7 +81,7 @@ void	send_byte(int pid, unsigned char byte)
 int	main(int argc, char *argv[])
 {
 	size_t	i;
-	int	pid_server;
+	int		pid_server;
 
 	i = 0;
 	if (argc != 3)

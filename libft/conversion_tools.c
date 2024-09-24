@@ -28,7 +28,7 @@ int	ft_conversion_tools(va_list args, const char *format)
 	else if (*format == 'u')
 		count += pf_ft_putnbr_u(va_arg(args, unsigned long));
 	else if (*format == 'x' || *format == 'X')
-		count += pf_ft_puthexa((unsigned long),
+		count += pf_ft_puthexa((unsigned long)
 				va_arg(args, unsigned int), format);
 	else if (*format == 'p')
 	{

@@ -32,38 +32,31 @@ void setup_signal_handler(void)
 void send_byte(int pid, unsigned char byte)
 {
     int bit_position;
-    for (int attempt = 0; attempt < 5; attempt++) // Intentar hasta 5 veces
-    {
-        bit_position = 0;
-        confirmation_received = 0; // Reiniciar el estado de confirmación
+    int attempt;
 
-        while (bit_position < 8)
+    attempt = 0;
+    while(attempt < 5)
+        {
+            bit_position = 0;
+            confirmation_received = 0; // Reiniciar el estado de confirmación
+            while (bit_position < 8)
         {
             if ((byte >> (7 - bit_position)) & 1)
                 kill(pid, SIGUSR1);
             else
-                kill(pid, SIGUSR2);
-
-            // Esperar un breve momento antes de verificar la confirmación
+                kill(pid, SIGUSR2);          
             usleep(500); // Ajusta el tiempo según sea necesario
-
             if (confirmation_received)
-            {
                 break; // Salir si se recibe confirmación
-            }
             bit_position++;
         }
-
         if (confirmation_received)
         {
             printf("Cliente: Confirmación recibida para el byte '%c'\n", byte);
             break; // Salir si se recibió confirmación para el byte
         }
         else
-        {
-            printf("Cliente: No se recibió confirmación para el byte '%c', reintentando...\n", byte);
-        }
-    }
+            printf("Cliente: Fail to confirm byte '%c', retry...\n", byte);
 }
 
 int main(int argc, char *argv[])

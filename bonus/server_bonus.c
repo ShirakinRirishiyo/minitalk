@@ -61,11 +61,8 @@ int main(void)
         printf("Error al manejar la señal SIGUSR2\n");
         return 1;
     }
-
     while (1)
-    {
         usleep(200); // Espera a recibir señales
-    }
 
-    return 0;
+    return (0);
 }

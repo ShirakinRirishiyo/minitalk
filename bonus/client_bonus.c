@@ -57,14 +57,17 @@ void send_byte(int pid, unsigned char byte)
         }
         else
             printf("Cliente: Fail to confirm byte '%c', retry...\n", byte);
+		}
 }
+
+
 
 int main(int argc, char *argv[])
 {
     if (argc != 3)
     {
         printf("Uso: %s <PID_del_servidor> <mensaje>\n", argv[0]);
-        return 1;
+        return (1);
     }
 
     int pid_server = atoi(argv[1]);
@@ -77,6 +80,5 @@ int main(int argc, char *argv[])
     }
 
     send_byte(pid_server, '\0'); // Enviar el carácter nulo para indicar fin del mensaje
-
-    return 0;
+    return (0);
 }

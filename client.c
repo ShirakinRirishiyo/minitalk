@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client.c                                           :+:      :+:    :+:   */
+/*   client_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dediaz-f <dediaz-f@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 14:52:49 by dediaz-f          #+#    #+#             */
-/*   Updated: 2024/09/24 16:54:40 by dediaz-f         ###   ########.fr       */
+/*   Updated: 2024/09/24 18:39:21 by dediaz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,9 +89,9 @@ int	main(int argc, char *argv[])
 		ft_printf("Uso: %s <PID__server> <mensaje>\n", argv[0]);
 		return (1);
 	}
-	pid_server = atoi(argv[1]);
+	pid_server = ft_atoi(argv[1]);
 	setup_signal_handler();
-	while (i < strlen(argv[2]))
+	while (i < ft_strlen(argv[2]))
 	{
 		send_byte(pid_server, (unsigned char)argv[2][i]);
 		i++;

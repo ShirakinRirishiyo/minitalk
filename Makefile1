@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Werror -Wextra -I./libft
-LIBFT =  ./libft/libftprintf.a
+LIBFT = ./libft/libftprintf.a
 
 CLIENT = client
 SERVER = server
@@ -25,14 +25,14 @@ $(OBJS_CLIENT): $(SRCS_CLIENT)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(LIBFT):
-	make -C ./libft
+	make -C ../libft
 
 clean:
 	rm -rf $(OBJS_SERVER) $(OBJS_CLIENT)
 
 fclean: clean
 	rm -f server client
-	make -C ./libft clean
+	make -C ../libft clean
 
 re: fclean all
 
